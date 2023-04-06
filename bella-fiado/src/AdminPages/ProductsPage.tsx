@@ -1,58 +1,36 @@
 import { useEffect, useState } from "react";
-import { AdminServices } from "./AdminServices/AdminServices";
-import Iproducts from "../Interfaces";
+import { ProductsServices } from "./AdminServices/ProductsServices";
+import { Iproducts } from "../Interfaces";
+import TableComponent from "./Tables/TablesComponent";
+
+
 
 export function ProductsPage() {
 
     const [prodsData, setProdsData] = useState<Iproducts[]>([]);
 
     useEffect(() => {
-        AdminServices.getProducts()
-            .then(response => {
-                setProdsData(response);
+        ProductsServices.getProducts()
+            .then((response) => {
+                setProdsData(response.data);
             })
             .catch(error => {
                 console.error(error)
             });
     }, []);
 
-    return (<div>
-        <header className=" h-16 w-full bg-black text-white flex items-center justify-between ">
-            <button className=" ml-4 border px-4 py-2">Retornar</button>
-            <span>
-                <button className=" text-green-500 border-green-500 border px-4 py-2">Criar</button>
-                <button className=" text-red-500 border-red-500 mx-4 border px-4 py-2">Deletar</button>
-            </span>
+    const deleteProduct = (_id: string) => {
+        ProductsServices.deleteProduct(_id)
+    }
 
-        </header>
-        <table className="border-collapse w-full">
-            <thead>
-                <tr>
-                    <th className="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300">#</th>
-                    <th className="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300">Nome</th>
-                    <th className="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300">ID</th>
-                    <th className="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300">Preço</th>
-                    <th className="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300">Editar</th>
-                </tr>
-            </thead>
-            <tbody>
-                {prodsData?.map((prod: Iproducts, index: number) => {
-                    return (
-                        <tr className="hover:bg-gray-100">
-                            <td className="p-3 border border-gray-300 ">{index}</td>
-                            <td className="p-3 border font-semibold border-gray-300">{prod.name}</td>
-                            <td className="p-3 border border-gray-300">{prod._id}</td>
-                            <td className="p-3 border border-gray-300">R${prod.price.toFixed(2)}</td>
-                            <td className="p-3 border border-gray-300">
-                                <button className=" bg-black text-white font-bold py-2 px-4">
-                                    Editar
-                                </button>
-                            </td>
-                        </tr>
-                    )
-                })
-                }
-            </tbody>
-        </table>
-    </div>)
+    const editProduct = (_id: string) => {
+        ProductsServices.editProduct(_id, {
+            name: 'teste',
+            price: 77.77
+        })
+    }
+
+    return (
+        <TableComponent data={prodsData} headers={['a', 'b', 'c', 'd', 'e']} onEdit={() => editProduct} onDelete={() => deleteProduct} />    
+    )
 }

@@ -1,18 +1,16 @@
-export default interface Iproducts {
+export interface Iproducts {
     _id:string,
     name: string,
     price: number
 }
 
-export default interface IAccounts{
+export interface IAccounts{
     _id:string,
 
 }
 
-export default interface Iuser {
+export interface Iuser {
     _id:string,
     username: string,
     password:string,
-    // accounts: Array<any>,
-    // tokents:Array<any> 
 }
