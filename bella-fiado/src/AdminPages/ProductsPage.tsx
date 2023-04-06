@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { AdminServices } from "./AdminServices/AdminServices";
 import Iproducts from "../Interfaces";
 
-export function ProductsPage(){
-    
+export function ProductsPage() {
+
     const [prodsData, setProdsData] = useState<Iproducts[]>([]);
 
     useEffect(() => {
@@ -17,6 +17,14 @@ export function ProductsPage(){
     }, []);
 
     return (<div>
+        <header className=" h-16 w-full bg-black text-white flex items-center justify-between ">
+            <button className=" ml-4 border px-4 py-2">Retornar</button>
+            <span>
+                <button className=" text-green-500 border-green-500 border px-4 py-2">Criar</button>
+                <button className=" text-red-500 border-red-500 mx-4 border px-4 py-2">Deletar</button>
+            </span>
+
+        </header>
         <table className="border-collapse w-full">
             <thead>
                 <tr>
@@ -28,7 +36,7 @@ export function ProductsPage(){
                 </tr>
             </thead>
             <tbody>
-                {prodsData?.map((prod:Iproducts, index:number) => {
+                {prodsData?.map((prod: Iproducts, index: number) => {
                     return (
                         <tr className="hover:bg-gray-100">
                             <td className="p-3 border border-gray-300 ">{index}</td>

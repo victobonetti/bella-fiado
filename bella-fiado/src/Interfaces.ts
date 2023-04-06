@@ -12,6 +12,7 @@ export default interface IAccounts{
 export default interface Iuser {
     _id:string,
     username: string,
+    password:string,
     // accounts: Array<any>,
     // tokents:Array<any> 
 }

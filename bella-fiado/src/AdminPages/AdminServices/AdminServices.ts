@@ -21,4 +21,8 @@ export class AdminServices {
             return error
         }
     }
+
+    static async createUser(username:string, password:string){
+        return await axios.post(USERS_URL, {username : username, password : password})
+    }
 }
