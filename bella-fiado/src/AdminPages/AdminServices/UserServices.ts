@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const USERS_URL = 'https://bella-fiado-api-victobonetti.vercel.app/users/'
+const USERS_URL = 'https://bella-fiado-api-victobonetti.vercel.app/users'
 
 
 export class UserServices {
