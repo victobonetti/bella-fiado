@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import AuthService from './AuthService';
 import { Link } from 'react-router-dom';
+import { removeAcentosEMaiusculas } from './AdminPages/stringFunctions';
 
 
 const LOGIN_URL = 'https://bella-fiado-api-victobonetti.vercel.app/users/login/';
@@ -20,8 +21,8 @@ function App() {
     event.preventDefault();
 
     const authService = new AuthService({ apiUrl: LOGIN_URL })
-    const username = getUsername;
-    const password = getPassword;
+    const username = removeAcentosEMaiusculas(getUsername);
+    const password = removeAcentosEMaiusculas(getPassword);
 
     if (!username || !password) {
       console.error("Usuário e senha são obrigatórios");
