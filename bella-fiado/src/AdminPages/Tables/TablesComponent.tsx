@@ -13,7 +13,7 @@ function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDe
 
     return (
         <> 
-            {data.length > 1 &&
+            {data.length >= 1 &&
                 <table className="border-collapse w-full">
                     <thead>
                         <tr>

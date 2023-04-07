@@ -131,7 +131,7 @@ export function UsersPage() {
         }
 
         {load && <Loader />}
-        {(usersData.length < 1 && !load) && <h1 className=" text-neutral-600 font-light text-4xl">Não foram encontrados dados :(</h1>}
+        {(usersData.length <= 1 && !load) && <h1 className=" text-neutral-600 font-light text-4xl">Não foram encontrados dados :(</h1>}
         {(erro.length > 1) && <ErrorMessage err={erro} />}
         {
             !openUserForm &&

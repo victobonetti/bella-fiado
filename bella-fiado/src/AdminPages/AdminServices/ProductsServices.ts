@@ -8,7 +8,7 @@ interface Iprod {
 
 export class ProductsServices {
      static async getProducts() {
-            return await axios.get(PRODS_URL)
+        return await axios.get(PRODS_URL)
     }
 
     static async createProduct(prodData:Iprod){
