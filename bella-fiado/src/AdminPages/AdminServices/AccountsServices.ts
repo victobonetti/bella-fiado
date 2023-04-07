@@ -1,5 +1,5 @@
 import axios from "axios"
-const ACCOUNTS_URL = 'https://bella-fiado-api-victobonetti.vercel.app/accounts/'
+const ACCOUNTS_URL = 'https://bella-fiado-api-victobonetti.vercel.app/accounts'
 
 interface Iitem {
     _id: string
