@@ -5,11 +5,12 @@ type ValidReactNode = string | number | boolean | null | undefined | React.React
 type TableProps<T extends Record<string, ValidReactNode>> = {
     data: T[],
     headers: string[],
-    onEdit: (item: T) => void,
-    onDelete: (_id: string) => void
+    onEdit: () => void,
+    onDelete: (_id: string) => void,
+    setTargetId: (_id:string) => void ,
 }
 
-function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDelete }: TableProps<T>) {
+function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDelete, setTargetId }: TableProps<T>) {
 
     return (
         <> 
@@ -32,7 +33,10 @@ function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDe
                                     <td key={key} className="p-3 border border-gray-300">{item[key as keyof T] as ReactNode}</td>
                                 ))}
                                 <td className="p-3 border border-gray-300">
-                                    <button className="bg-black text-white font-bold py-2 px-4" onClick={() => onEdit(item)}>
+                                    <button className="bg-black text-white font-bold py-2 px-4" onClick={() => {
+                                        onEdit()
+                                        setTargetId(item._id)
+                                        }}>
                                         Editar
                                     </button>
                                     <button className="text-red-500 border-red-500 mx-4 border px-4 py-2" onClick={() => onDelete(item._id)}>

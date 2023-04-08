@@ -8,9 +8,9 @@ export function removeAcentosEMaiusculas(inputString:string) {
     return semMaiusculas;
   }
 
-export function excluirLetras(inputString:string) {
+export function excluirLetras(inputString:string): number {
     // substitui todas as letras por uma string vazia
     const semLetras = inputString.replace(/[a-zA-Z]/g, '');
   
-    return semLetras;
+    return Number(semLetras);
   }
