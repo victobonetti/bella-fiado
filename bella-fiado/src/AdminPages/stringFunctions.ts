@@ -14,3 +14,27 @@ export function excluirLetras(inputString:string): number {
   
     return Number(semLetras);
   }
+
+export function capitalize(inputString:string) {
+    // Verifica se o primeiro caractere é um número
+    if (!isNaN(Number(inputString.charAt(0)))) {
+      return inputString; // Retorna a string original sem modificar
+    }
+  
+    // Converte a string para minúsculas
+    inputString = inputString.toLowerCase();
+  
+    // Pega o primeiro caractere e converte para maiúscula
+    const firstChar = inputString.charAt(0).toUpperCase();
+  
+    // Concatena o primeiro caractere maiúsculo com o restante da string em minúsculas
+    const restOfString = inputString.slice(1);
+  
+    // Retorna a string modificada
+    return firstChar + restOfString;
+  }
+  
+  // Exemplo de uso:
+  console.log(capitalize("TEXTO DE EXEMPLO")); // Saída: "Texto de exemplo"
+  console.log(capitalize("1234texto de exemplo")); // Saída: "1234texto de exemplo"
+  

@@ -26,14 +26,16 @@ export function FormComponent<T extends { _id: string }>({ title, submitFunction
     const changeToLoad = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoad(true);
-        return submitFunction(e)
+        submitFunction(e).then(() => {
+            cancelFunction()
+        })
     }
 
     return (
 
         <div className=" relative z-10 w-screen flex justify-center items-center">
             {!load &&
-                <form onSubmit={e => changeToLoad(e).then(() => cancelFunction)} className="bg-white border border-gray-700 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3 mt-16">
+                <form onSubmit={e => changeToLoad(e)} className="bg-white border border-gray-700 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3 mt-16">
                     <h1 className=" mb-4 text-4xl font-light text-gray-700">{title}
                     </h1>
                     {inputs?.map((i, index) => {
@@ -50,6 +52,7 @@ export function FormComponent<T extends { _id: string }>({ title, submitFunction
                                     maxLength={i.maxLen}
                                     minLength={i.minLen}
                                     placeholder={i.placeHolder}
+                                    step={i.inputType === 'number' ? '0.5' : ''}
                                     required
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
