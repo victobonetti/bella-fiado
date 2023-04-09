@@ -143,7 +143,7 @@ export function ProductsPage() {
             </div>
             {!load && !openProductCreateForm && !openProductEditForm &&
                 <TableComponent<Iproducts> data={ProductsData} headers={['#', 'id', 'nome', 'preço', 'ações']}
-                    onEdit={() => setOpenProductEditForm(!openProductEditForm)} onDelete={() => deleteProduct} setTargetId={setTargetId} />
+                    onEdit={() => setOpenProductEditForm(!openProductEditForm)} onDelete={deleteProduct} setTargetId={setTargetId} />
             }
             {openProductEditForm &&
                 <FormComponent<Iproducts> title={"Editar produto"}

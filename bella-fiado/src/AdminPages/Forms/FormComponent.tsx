@@ -19,7 +19,7 @@ interface Iform<T> {
     inputs: Iinput[]
 }
 
-export function FormComponent<T extends { _id: string }>({ title, submitFunction, cancelFunction, inputs }: Iform<T>) {
+export function FormComponent<T>({ title, submitFunction, cancelFunction, inputs }: Iform<T>) {
 
     const [load, setLoad] = useState(false)
 

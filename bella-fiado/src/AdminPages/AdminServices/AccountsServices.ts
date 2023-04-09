@@ -1,16 +1,7 @@
 import axios from "axios"
 const ACCOUNTS_URL = 'https://bella-fiado-api-victobonetti.vercel.app/accounts'
 
-interface Iitem {
-    _id: string
-    product_id: string
-    amount: number
-}
-
-interface IcreateAccount {
-    user_id: string,
-    items: Array<Iitem>
-}
+import { IAccount, IItem } from "../../Interfaces";
 
 export class AccountsServices {
     static async getAccounts() {
@@ -25,12 +16,17 @@ export class AccountsServices {
         return await axios.get(`${ACCOUNTS_URL}/getUserAccount/${_id}`)
     }
 
-    static async addItemToAccount(accountId: string, itemData: Iitem) {
-        return await axios.post(`${ACCOUNTS_URL}/addItem/${accountId}`, {
-            _id: itemData._id,
-            product_id: itemData.product_id,
-            amount: itemData.amount
-        })
+    static async addItemToAccount(accountId: string, itemsData: IItem[]) {
+        const requests = itemsData.map(item => axios.post(`${ACCOUNTS_URL}/addItem/${accountId}`, {
+            _id: item.product_id,
+            product_id: item.product_id,
+            amount: item.amount
+        }));
+        try {
+            await Promise.all(requests);
+        } catch (error) {
+            throw new Error(`Failed to add items to account ${accountId}: ${error}`);
+        }
     }
 
     static async addPaymentToAccount(accountId: string, value: number) {
@@ -44,7 +40,7 @@ export class AccountsServices {
         })
     }
 
-    static async createAccount(accountData: IcreateAccount) {
+    static async createAccount(accountData: IAccount) {
         return await axios.post(ACCOUNTS_URL, accountData)
     }
 

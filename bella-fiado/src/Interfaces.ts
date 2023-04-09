@@ -14,3 +14,20 @@ export interface Iuser {
     username: string,
     password:string,
 }
+
+export interface IAccount{
+    user_id: Iuser['_id'];
+    items?: IItem[];
+    payments?: IPayment[];
+    total?(): number;
+}
+
+export interface IItem {
+    product_id: Iproducts;
+    amount: number;
+}
+
+export interface IPayment{
+    value: number;
+    date: Date;
+}
