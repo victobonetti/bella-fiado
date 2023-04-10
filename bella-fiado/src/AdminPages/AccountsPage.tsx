@@ -8,12 +8,6 @@ import { removeAcentosEMaiusculas } from "./stringFunctions";
 import { FormComponent } from "./Forms/FormComponent";
 import { AxiosResponse } from "axios";
 
-interface returnMethods {
-    _id:string,
-    billPrice: number,
-    paidPrice: number
-}
-
 interface AccountsResponse {
     items: IItem[],
     payments: IPayment[]
@@ -137,14 +131,12 @@ export function AccountsPage() {
         });
     };
 
-    const postPayment = (id: string) => {
+    const postPayment = (args: AccountsShow) => {
         let payment = Number(prompt('Digite o valor que deseja lançar como pagamento.'))
-        if (payment) {
-            AccountsServices.getAccountById(id).then((acc: AxiosResponse<IAccount>) => {
-                AccountsServices.addPaymentToAccount(id, payment).then(() => {
-                    getAccounts()
-                    alert('Pagamento lançado com sucesso.')
-                })
+        if ((payment > 0) && (payment <= args.total_bill) ) {
+            AccountsServices.addPaymentToAccount(args._id, payment).then(() => {
+                getAccounts()
+                alert('Pagamento lançado com sucesso.')
             })
         } else {
             alert('Dado de input inválido.')
@@ -186,17 +178,19 @@ export function AccountsPage() {
             {load && <Loader />}
             {erro && <ErrorMessage err={erro} />}
             {!load &&
-                <TableComponent<AccountsShow, returnMethods> 
+                <TableComponent<AccountsShow>
                     data={getAccountsData()}
                     headers={['#', 'id', 'id do usuário', 'nome do usuário', 'Valor na conta', 'Valor pago']} onEdit={null} onDelete={null}
                     setTargetId={() => null}
                     otherButtons={[{
                         text: 'Adicionar Pagamento',
-                        method: postPayment
+                        method: postPayment,
+                        color: 'green',
 
                     }, {
                         text: 'Excluir pagamento',
-                        method: postPayment
+                        method: postPayment,
+                        color: 'red',
                     }
                     ]
                     }

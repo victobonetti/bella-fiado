@@ -3,22 +3,23 @@ import { capitalize } from "../stringFunctions";
 
 type ValidReactNode = string | number | boolean | null | undefined | React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 
-interface OtherButton<M> {
+interface OtherButton<T> {
     text: string;
-    method: (data: M) => void;
+    method: (data: T) => void;
+    color?: string
 }
 
-type TableProps<T extends Record<string, ValidReactNode>, M> = {
+type TableProps<T extends Record<string, ValidReactNode>> = {
     data: T[],
     headers: string[],
     onEdit?: (() => void) | null,
     onDelete: ((_id: string) => void) | null,
     setTargetId?: ((_id: string) => void) | null,
-    otherButtons?: OtherButton<M>[] | null
+    otherButtons?: OtherButton<T>[] | null
     // otherButtonArgs?: OtherButtonArgs | null
 }
 
-function TableComponent<T extends { _id: string }, M extends { _id: string }>({ data, headers, onEdit, onDelete, setTargetId, otherButtons }: TableProps<T, M>) {
+function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDelete, setTargetId, otherButtons }: TableProps<T>) {
 
     return (
         <>
@@ -26,7 +27,7 @@ function TableComponent<T extends { _id: string }, M extends { _id: string }>({ 
                 <table className="border-collapse w-full">
                     <thead>
                         <tr>
-                            {headers.map((header, index) => (
+                            {headers.map((header:string, index:number) => (
                                 <th key={index} className="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300">
                                     {header}
                                 </th>
@@ -72,7 +73,7 @@ function TableComponent<T extends { _id: string }, M extends { _id: string }>({ 
                                     <td>
                                         {otherButtons?.map((button) => {
                                             return (
-                                                <button className="text-green-500 border-green-500 mx-4 border px-4 py-2" onClick={() => button.method(item, )}>
+                                                <button className={`text-${button.color}-500 border-${button.color}-500 mx-4 border px-4 py-2`} onClick={() => button.method(item)}>
                                                     {button.text}
                                                 </button>
                                             )
