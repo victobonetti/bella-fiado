@@ -54,6 +54,8 @@ export function AccountsPage() {
     const [openAccountEditForm, setOpenAccountEditForm] = useState(false);
     const [load, setLoad] = useState(false);
     const [erro, setErro] = useState<string>('');
+    const [selectedAccountData, setSelectedAccountData] = useState<IAccount>()
+    const [selectedAccountWindowOpen, setSelectedAccountWindowOpen] = useState(false)
 
     //post states
     const [newAccountId, setNewAccountId] = useState('');
@@ -66,43 +68,6 @@ export function AccountsPage() {
     useLayoutEffect(() => {
         getAccounts();
     }, []);
-
-    const createAccountInputs = [
-        {
-            label: 'ID do usuário:',
-            name: 'user_id',
-            id: 'user_id',
-            inputType: 'text',
-            placeHolder: '',
-            onChangeFunction: setNewUserId,
-            maxLen: 100,
-            minLen: 1,
-        },
-        {
-            label: 'Items:',
-            name: 'items',
-            id: 'items',
-            inputType: 'items',
-            placeHolder: '',
-            onChangeFunction: setNewItems,
-            maxLen: 100,
-            minLen: 1,
-        },
-    ];
-
-    const editAccountInputs = [
-        {
-            label: 'Items:',
-            name: 'items',
-            id: 'items',
-            inputType: 'items',
-            placeHolder: '',
-            onChangeFunction: setNewEditItems,
-            maxLen: 100,
-            minLen: 0,
-        },
-    ];
-
 
     const createNewAccount = (e: React.FormEvent<HTMLFormElement>) => {
         return new Promise<void>((resolve, reject) => {
@@ -119,21 +84,21 @@ export function AccountsPage() {
         });
     };
 
-    const editAccount = (e: React.FormEvent<HTMLFormElement>) => {
-        return new Promise<void>((resolve, reject) => {
-            AccountsServices.addItemToAccount(newAccountId, newEditItems).then(() => {
-                getAccounts();
-                resolve();
-            }).catch((err) => {
-                setErro(String(err));
-                reject();
-            });
-        });
-    };
+    // const editAccount = (e: React.FormEvent<HTMLFormElement>) => {
+    //     return new Promise<void>((resolve, reject) => {
+    //         AccountsServices.addItemToAccount(newAccountId, newEditItems).then(() => {
+    //             getAccounts();
+    //             resolve();
+    //         }).catch((err) => {
+    //             setErro(String(err));
+    //             reject();
+    //         });
+    //     });
+    // };
 
     const postPayment = (args: AccountsShow) => {
         let payment = Number(prompt('Digite o valor que deseja lançar como pagamento.'))
-        if ((payment > 0) && (payment <= args.total_bill) ) {
+        if ((payment > 0) && (payment <= args.total_bill)) {
             AccountsServices.addPaymentToAccount(args._id, payment).then(() => {
                 getAccounts()
                 alert('Pagamento lançado com sucesso.')
@@ -141,6 +106,19 @@ export function AccountsPage() {
         } else {
             alert('Dado de input inválido.')
         }
+    }
+
+    interface acountAndTotal {
+        account: IAccount,
+        total: number
+    }
+
+    const getItems = (args: AccountsShow) => {
+        AccountsServices.getAccountById(args._id).then((a: AxiosResponse<acountAndTotal>) => {
+            console.log(a.data.account)
+            setSelectedAccountData(a.data.account);
+            setSelectedAccountWindowOpen(true)
+        }).catch(e => alert(e))
     }
 
     const getAccounts = () => {
@@ -159,25 +137,51 @@ export function AccountsPage() {
 
     return (
         <>
-            {openAccountCreateForm && (
-                <FormComponent
-                    inputs={createAccountInputs}
-                    submitFunction={createNewAccount}
-                    cancelFunction={() => setOpenAccountCreateForm(false)}
-                    title="Criar Conta"
-                />
-            )}
-            {openAccountEditForm && (
-                <FormComponent
-                    inputs={editAccountInputs}
-                    submitFunction={editAccount}
-                    cancelFunction={() => setOpenAccountEditForm(false)}
-                    title="Editar Conta"
-                />
-            )}
+            {selectedAccountWindowOpen && (
+                <div className="w-full bg-neutral-700 text-gray-200 p-4">
+                    <div className="h-96">
+                        <table className=" select-none table-auto w-full text-left">
+                            <thead>
+                                <tr className="bg-gray-900 text-white">
+                                    <th className="py-4">Nome do produto</th>
+                                    <th className="py-4">Preço do produto</th>
+                                    <th className="py-4">Quantidade do produto</th>
+                                    <th className="py-4">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {selectedAccountData?.items?.map((data) => (
+                                    <tr key={data.product_id._id} className="bg-gray-800 text-gray-200">
+                                        <td className="py-2 px-4">{data.product_id.name}</td>
+                                        <td className="py-2 px-4">R${data.product_id.price.toFixed(2)}</td>
+                                        <td className="py-2 px-4">{data.amount}</td>
+                                        <td className="py-2 px-4">
+                                            R${(Number(data.product_id.price) * Number(data.amount)).toFixed(2)}
+                                        </td>
+                                    </tr>
+                                ))}
+                                <tr><td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td className=" bg-black">TOTAL: R$28.00</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button
+                        className="border border-red-500 text-red-500 text-2xl py-2 px-4 mt-4 mx-auto block"
+                        onClick={() => {
+                            setSelectedAccountWindowOpen(false);
+                            setSelectedAccountData(undefined);
+                        }}
+                    >
+                        Retornar
+                    </button>
+                </div>)
+            }
             {load && <Loader />}
             {erro && <ErrorMessage err={erro} />}
-            {!load &&
+            {
+                !load && !selectedAccountWindowOpen &&
                 <TableComponent<AccountsShow>
                     data={getAccountsData()}
                     headers={['#', 'id', 'id do usuário', 'nome do usuário', 'Valor na conta', 'Valor pago']} onEdit={null} onDelete={null}
@@ -185,11 +189,11 @@ export function AccountsPage() {
                     otherButtons={[{
                         text: 'Adicionar Pagamento',
                         method: postPayment,
-                        color: 'green',
+                        color: 'blue',
 
                     }, {
-                        text: 'Excluir pagamento',
-                        method: postPayment,
+                        text: 'Ver lista',
+                        method: getItems,
                         color: 'red',
                     }
                     ]
