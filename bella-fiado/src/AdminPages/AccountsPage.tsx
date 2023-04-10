@@ -114,10 +114,12 @@ export function AccountsPage() {
     }
 
     const getItems = (args: AccountsShow) => {
+        setLoad(true)
         AccountsServices.getAccountById(args._id).then((a: AxiosResponse<acountAndTotal>) => {
             console.log(a.data.account)
             setSelectedAccountData(a.data.account);
             setSelectedAccountWindowOpen(true)
+            setLoad(false)
         }).catch(e => alert(e))
     }
 
@@ -138,20 +140,20 @@ export function AccountsPage() {
     return (
         <>
             {selectedAccountWindowOpen && (
-                <div className="w-full bg-neutral-700 text-gray-200 p-4">
+                <div className="w-full bg-neutral-700 text-gray-200">
                     <div className="h-96">
-                        <table className=" select-none table-auto w-full text-left">
-                            <thead>
+                        <table className=" select-none table-auto w-full text-left m-4">
+                            <thead className=" text-center">
                                 <tr className="bg-gray-900 text-white">
                                     <th className="py-4">Nome do produto</th>
-                                    <th className="py-4">Preço do produto</th>
+                                    <th className="p font-bold y-4">Preço do produto</th>
                                     <th className="py-4">Quantidade do produto</th>
                                     <th className="py-4">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {selectedAccountData?.items?.map((data) => (
-                                    <tr key={data.product_id._id} className="bg-gray-800 text-gray-200">
+                                    <tr key={data.product_id._id} className=" hover:opacity-90 text-center bg-gray-800 text-gray-200">
                                         <td className="py-2 px-4">{data.product_id.name}</td>
                                         <td className="py-2 px-4">R${data.product_id.price.toFixed(2)}</td>
                                         <td className="py-2 px-4">{data.amount}</td>
@@ -160,22 +162,30 @@ export function AccountsPage() {
                                         </td>
                                     </tr>
                                 ))}
-                                <tr><td></td>
+                                <tr className=" text-center"><td></td>
                                     <td></td>
+                                    <td className=" text-2xl bg-black">TOTAL:</td>
+                                    <td className=" text-2xl text-red-500 bg-black font-bold">R${selectedAccountData?.items?.reduce((total, item) => total + (item.product_id.price * item.amount), 0).toFixed(2)
+                                    }</td></tr>
+                                <tr className=" text-center"><td></td>
                                     <td></td>
-                                    <td className=" bg-black">TOTAL: R$28.00</td></tr>
+                                    <td className=" text-2xl bg-black">Valor pago:</td>
+                                    <td className=" text-2xl bg-black text-green-300 font-bold">R${selectedAccountData?.payments?.reduce((total, payment) => total + payment.value, 0).toFixed(2)}</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <button
-                        className="border border-red-500 text-red-500 text-2xl py-2 px-4 mt-4 mx-auto block"
-                        onClick={() => {
-                            setSelectedAccountWindowOpen(false);
-                            setSelectedAccountData(undefined);
-                        }}
-                    >
-                        Retornar
-                    </button>
+                    <span className=" flex w-full h-fit justify-evenly bg-neutral-800">
+                        <button
+                            className="border border-red-500 text-red-500 text-2xl py-2 px-4 mt-4 mx-auto block"
+                            onClick={() => {
+                                setSelectedAccountWindowOpen(false);
+                                setSelectedAccountData(undefined);
+                            }}
+                        >
+                            Retornar
+                        </button>
+                        <button className=" border border-green-500 text-green-500 text-2xl py-2 px-4 mt-4 mx-auto block">Lançar item</button>
+                    </span>
                 </div>)
             }
             {load && <Loader />}
@@ -189,12 +199,12 @@ export function AccountsPage() {
                     otherButtons={[{
                         text: 'Adicionar Pagamento',
                         method: postPayment,
-                        color: 'blue',
+                        color: 'red',
 
                     }, {
                         text: 'Ver lista',
                         method: getItems,
-                        color: 'red',
+                        color: 'purple',
                     }
                     ]
                     }

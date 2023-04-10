@@ -73,7 +73,7 @@ function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDe
                                     <td>
                                         {otherButtons?.map((button) => {
                                             return (
-                                                <button className={`text-${button.color}-500 border-${button.color}-500 mx-4 border px-4 py-2`} onClick={() => button.method(item)}>
+                                                <button className={` text-${button.color}-500 border-${button.color}-500 mx-4 border px-4 py-2`} onClick={() => button.method(item)}>
                                                     {button.text}
                                                 </button>
                                             )

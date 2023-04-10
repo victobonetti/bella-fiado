@@ -25,7 +25,7 @@ export interface IAccount{
 export interface IItem {
     product_id: Iproducts;
     amount: number;
-    date?: Date
+    date: Date
 }
 
 export interface IPayment{
