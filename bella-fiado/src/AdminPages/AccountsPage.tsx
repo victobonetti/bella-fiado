@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect, useLayoutEffect, FormEvent } from "react";
 import { AccountsServices } from "./AdminServices/AccountsServices";
 import { IAccount, IItem, IPayment, Iuser } from "../Interfaces";
 import TableComponent from "./Tables/TablesComponent";
@@ -48,19 +48,21 @@ export function AccountsPage() {
         console.log(data)
         return data;
     };
+    const [payment, setPayments] = useState(0)
+    const [getTargetId, setTargetId] = useState('')
 
     //Page states
     const [openAccountCreateForm, setOpenAccountCreateForm] = useState(false);
-    const [openAccountEditForm, setOpenAccountEditForm] = useState(false);
     const [load, setLoad] = useState(false);
     const [erro, setErro] = useState<string>('');
     const [selectedAccountData, setSelectedAccountData] = useState<IAccount>()
     const [selectedAccountWindowOpen, setSelectedAccountWindowOpen] = useState(false)
+    const [openPaymentWindow, setOpenPaymentWindow] = useState(false)
 
     //post states
-    const [newAccountId, setNewAccountId] = useState('');
     const [newUserId, setNewUserId] = useState('');
     const [newItems, setNewItems] = useState<IItem[]>([]);
+    const [createAccountId, setCreateAccountId] = useState('');
 
     //put states
     const [newEditItems, setNewEditItems] = useState<IItem[]>([]);
@@ -71,14 +73,12 @@ export function AccountsPage() {
 
     const createNewAccount = (e: React.FormEvent<HTMLFormElement>) => {
         return new Promise<void>((resolve, reject) => {
-            const accountData: IAccount = {
-                user_id: newUserId
-            };
-            AccountsServices.createAccount(accountData).then(() => {
+            console.log(createAccountId)
+            AccountsServices.createAccount({user_id: createAccountId}).then(() => {
                 getAccounts();
                 resolve();
             }).catch((err) => {
-                setErro(String(err));
+                alert(String(err));
                 reject();
             });
         });
@@ -96,16 +96,42 @@ export function AccountsPage() {
     //     });
     // };
 
-    const postPayment = (args: AccountsShow) => {
-        let payment = Number(prompt('Digite o valor que deseja lançar como pagamento.'))
-        if ((payment > 0) && (payment <= args.total_bill)) {
-            AccountsServices.addPaymentToAccount(args._id, payment).then(() => {
+    const postPayment = (e: React.FormEvent<HTMLFormElement>) => {
+        console.log(getTargetId + ' TARGET')
+        console.log(payment + ' TARGET')
+        return new Promise<void>((resolve, reject) => {
+            AccountsServices.addPaymentToAccount(getTargetId, payment).then(() => {
                 getAccounts()
                 alert('Pagamento lançado com sucesso.')
+                resolve()
+            }).catch((e) => {
+                alert(e)
+                reject()
             })
-        } else {
-            alert('Dado de input inválido.')
-        }
+
+        })
+
+    }
+    const paymentInput = {
+        label: 'Insira o valor do pagamento:',
+        name: 'payment',
+        id: 'payment',
+        inputType: 'number',
+        maxLen: 8,
+        minLen: 1,
+        placeHolder: '5.00',
+        onChangeFunction: setPayments,
+    }
+
+    const createAccountInput = {
+        label: 'Insira o ID do funcionário:',
+        name: 'account_id',
+        id: 'account_id',
+        inputType: 'text',
+        maxLen: 100,
+        minLen: 1,
+        placeHolder: '_id',
+        onChangeFunction: setCreateAccountId,
     }
 
     interface acountAndTotal {
@@ -138,45 +164,68 @@ export function AccountsPage() {
     };
 
     return (
-        <>
+        <> 
+        { !load && !selectedAccountWindowOpen && !openPaymentWindow && <div className=" sticky w-full bg-gradient-to-b from-black to-neutral-900 h-16 flex justify-end items-center">
+            <button onClick={() => setOpenAccountCreateForm(!openAccountCreateForm)} className=" mr-4 border px-4 py-2 text-xl border-green-400 text-green-400">Criar nova conta</button>
+        </div> }
+
+            {
+                openAccountCreateForm && <FormComponent title={"Insira o id do usuário"} submitFunction={createNewAccount} cancelFunction={() => setOpenAccountCreateForm(!openAccountCreateForm)} inputs={[createAccountInput]} />
+            }
+
+            {
+                openPaymentWindow &&
+                <FormComponent title={"Insira o valor"} submitFunction={postPayment} cancelFunction={() => setOpenPaymentWindow(false)} inputs={[paymentInput]} />
+            }
             {selectedAccountWindowOpen && (
-                <div className="w-full bg-neutral-700 text-gray-200">
-                    <div className="h-96">
-                        <table className=" select-none table-auto w-full text-left m-4">
+                <div className="w-full h-full bg-neutral-300 text-black-200">
+                    <div className=" h-96 border-b-2 border-black">
+                        <table className=" select-none table-auto w-full text-left">
                             <thead className=" text-center">
                                 <tr className="bg-gray-900 text-white">
+                                    <th className="py-4">Data</th>
                                     <th className="py-4">Nome do produto</th>
-                                    <th className="p font-bold y-4">Preço do produto</th>
+                                    <th className="py-4">Preço do produto</th>
                                     <th className="py-4">Quantidade do produto</th>
                                     <th className="py-4">Total</th>
+
                                 </tr>
                             </thead>
                             <tbody>
                                 {selectedAccountData?.items?.map((data) => (
                                     <tr key={data.product_id._id} className=" hover:opacity-90 text-center bg-gray-800 text-gray-200">
+                                        <td>{String(data?.date).substring(0, 10)}</td>
                                         <td className="py-2 px-4">{data.product_id.name}</td>
                                         <td className="py-2 px-4">R${data.product_id.price.toFixed(2)}</td>
                                         <td className="py-2 px-4">{data.amount}</td>
                                         <td className="py-2 px-4">
                                             R${(Number(data.product_id.price) * Number(data.amount)).toFixed(2)}
                                         </td>
+
                                     </tr>
                                 ))}
-                                <tr className=" text-center"><td></td>
+                                <tr className=" text-center">
                                     <td></td>
-                                    <td className=" text-2xl bg-black">TOTAL:</td>
-                                    <td className=" text-2xl text-red-500 bg-black font-bold">R${selectedAccountData?.items?.reduce((total, item) => total + (item.product_id.price * item.amount), 0).toFixed(2)
-                                    }</td></tr>
-                                <tr className=" text-center"><td></td>
                                     <td></td>
-                                    <td className=" text-2xl bg-black">Valor pago:</td>
-                                    <td className=" text-2xl bg-black text-green-300 font-bold">R${selectedAccountData?.payments?.reduce((total, payment) => total + payment.value, 0).toFixed(2)}</td></tr>
+                                    <td></td>
+                                    <td className=" font-semibold text-2xl ">TOTAL:</td>
+                                    <td className=" text-2xl text-red-600  font-bold">R${selectedAccountData?.items?.reduce((total, item) => total + (item.product_id.price * item.amount), 0).toFixed(2)
+                                    }</td>
+
+
+                                </tr>
+                                <tr className=" text-center">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td className=" font-semibold text-2xl ">Valor pago:</td>
+                                    <td className=" text-2xl text-green-600 font-bold">R${selectedAccountData?.payments?.reduce((total, payment) => total + payment.value, 0).toFixed(2)}</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <span className=" flex w-full h-fit justify-evenly bg-neutral-800">
+                    <span className=" flex w-full h-fit justify-evenly bg-white">
                         <button
-                            className="border border-red-500 text-red-500 text-2xl py-2 px-4 mt-4 mx-auto block"
+                            className="border shadow bg-red-500 text-white text-2xl py-2 px-4 my-4 mx-auto block"
                             onClick={() => {
                                 setSelectedAccountWindowOpen(false);
                                 setSelectedAccountData(undefined);
@@ -184,27 +233,29 @@ export function AccountsPage() {
                         >
                             Retornar
                         </button>
-                        <button className=" border border-green-500 text-green-500 text-2xl py-2 px-4 mt-4 mx-auto block">Lançar item</button>
+                        <button className=" border shadow bg-green-500 text-white text-2xl py-2 px-4 my-4 mx-auto block">Lançar item</button>
                     </span>
-                </div>)
-            }
+                </div>)}
+
             {load && <Loader />}
+
             {erro && <ErrorMessage err={erro} />}
+
             {
-                !load && !selectedAccountWindowOpen &&
+                !load && !selectedAccountWindowOpen && !openPaymentWindow &&
                 <TableComponent<AccountsShow>
                     data={getAccountsData()}
                     headers={['#', 'id', 'id do usuário', 'nome do usuário', 'Valor na conta', 'Valor pago']} onEdit={null} onDelete={null}
-                    setTargetId={() => null}
+                    setTargetId={setTargetId}
                     otherButtons={[{
                         text: 'Adicionar Pagamento',
-                        method: postPayment,
-                        color: 'red',
+                        method: () => setOpenPaymentWindow(!openPaymentWindow),
+                        color: 'green',
 
                     }, {
-                        text: 'Ver lista',
+                        text: 'Ver conta',
                         method: getItems,
-                        color: 'purple',
+                        color: 'red',
                     }
                     ]
                     }

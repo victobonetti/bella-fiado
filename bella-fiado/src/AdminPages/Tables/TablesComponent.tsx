@@ -27,7 +27,7 @@ function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDe
                 <table className="border-collapse w-full">
                     <thead>
                         <tr>
-                            {headers.map((header:string, index:number) => (
+                            {headers.map((header: string, index: number) => (
                                 <th key={index} className="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300">
                                     {header}
                                 </th>
@@ -36,7 +36,7 @@ function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDe
                     </thead>
                     <tbody>
                         {data?.map((item, index) => (
-                            <tr key={index} className="hover:bg-gray-100">
+                            <tr key={index}>
                                 <td className="p-3 border border-gray-300">{index}</td>
                                 {Object.keys(data[0]).map((key) => {
 
@@ -70,10 +70,13 @@ function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDe
                                     </td>
                                 }
                                 {otherButtons != null &&
-                                    <td>
+                                    <td className="p-2 border-y flex flex-col items-center justify-center border-gray-300">
                                         {otherButtons?.map((button) => {
                                             return (
-                                                <button className={` text-${button.color}-500 border-${button.color}-500 mx-4 border px-4 py-2`} onClick={() => button.method(item)}>
+                                                <button className={` w-full text-white bg-${button.color}-500 border-${button.color}-500 border px-2 mb-1 py-1 opacity-80 hover:opacity-100`} onClick={() => {
+                                                    setTargetId?.(item._id)
+                                                    button.method(item)
+                                                }}>
                                                     {button.text}
                                                 </button>
                                             )
