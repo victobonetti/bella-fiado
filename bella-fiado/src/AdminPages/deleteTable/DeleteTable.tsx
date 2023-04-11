@@ -47,6 +47,8 @@ export function DeleteTable<T extends { _id: string }>({ headers, deleteFunction
                                 deleteFunction(item._id)
                             } catch {
                                 alert("erro ao excluir.")
+                            } finally {
+                                cancelFunction()
                             }
                         
                         }} className="p-3 border border-gray-300 text-red-500 font-black text-4xl cursor-pointer">X</td>

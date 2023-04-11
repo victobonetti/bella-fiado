@@ -22,7 +22,15 @@ interface editItemInterface {
     amount: number,
     date: Date,
     product_name: string
-    product_price: number
+    product_price: string
+
+
+}
+
+interface editPaymentsInterface {
+    _id: string,
+    date: string,
+    value: string
 }
 
 interface AccountsShow {
@@ -45,9 +53,26 @@ export function AccountsPage() {
                         amount: item.amount,
                         date: item.date,
                         product_name: item.product_id.name,
-                        product_price: item.product_id.price
+                        product_price: `R$${item.product_id.price.toFixed(2)}`
                     }));
                     resolve(itemsWithoutProductId);
+                })
+                .catch(e => {
+                    reject(e);
+                });
+        });
+    };
+
+    const getPaymentsById = (_id: string): Promise<editPaymentsInterface[]> => {
+        return new Promise((resolve, reject) => {
+            AccountsServices.getAccountById(_id)
+                .then((response: AxiosResponse<{ account: AccountsResponse }>) => {
+                    const paymentsArray = response.data.account.payments.map(payment => ({
+                        _id: payment._id,
+                        date: String(payment.date).substring(0,10),
+                        value: `R$${payment.value.toFixed(2)}`
+                    }));
+                    resolve(paymentsArray);
                 })
                 .catch(e => {
                     reject(e);
@@ -89,13 +114,11 @@ export function AccountsPage() {
     const [selectedAccountData, setSelectedAccountData] = useState<IAccount>()
     const [selectedAccountWindowOpen, setSelectedAccountWindowOpen] = useState(false)
     const [openPaymentWindow, setOpenPaymentWindow] = useState(false)
-    const [deleteItemAtive, setDeleteItemActive] = useState(false)
+    const [deleteItemActive, setDeleteItemActive] = useState(false)
+    const [deletePaymentActive, setDeletePaymentActive] = useState(false)
 
     //post states
     const [createAccountId, setCreateAccountId] = useState('');
-
-    //put states
-    const [newEditItems, setNewEditItems] = useState<IItem[]>([]);
 
     useLayoutEffect(() => {
         getAccounts();
@@ -194,13 +217,25 @@ export function AccountsPage() {
             AccountsServices.deleteItemFromAccount(getTargetId, _id).then((a) => {
                 resolve()
                 alert('Item excluído')
+                getAccounts()
             }).catch((e) => {
                 reject()
                 setErro(e)
             })
         })
+    }
 
-
+    const deletePayment = (_id: string) => {
+        return new Promise<void>((resolve, reject) => {
+            AccountsServices.deletePaymentFromAccount(getTargetId, _id).then((a) => {
+                resolve()
+                alert('Pagamento excluído')
+                getAccounts()
+            }).catch((e) => {
+                reject()
+                setErro(e)
+            })
+        })
     }
 
     return (
@@ -279,14 +314,18 @@ export function AccountsPage() {
 
             {load && <Loader />}
 
-            {deleteItemAtive &&
-                <DeleteTable<editItemInterface> getMethod={() => getAccountItemsById(getTargetId)} headers={['teste, teste']} deleteFunction={deleteItem} cancelFunction={() => setDeleteItemActive(!deleteItemAtive)} />
+            {deleteItemActive &&
+                <DeleteTable<editItemInterface> getMethod={() => getAccountItemsById(getTargetId)} headers={['Id', 'Quantidade', 'Data', 'Nome do produto', 'Preço']} deleteFunction={deleteItem} cancelFunction={() => setDeleteItemActive(!deleteItemActive)} />
+            }
+
+            {deletePaymentActive && 
+                <DeleteTable<editPaymentsInterface> getMethod={() => getPaymentsById(getTargetId)} headers={['ID', 'Data', 'Valor', 'Ações']} deleteFunction={deletePayment} cancelFunction={() => setDeletePaymentActive(!deletePaymentActive)}/>
             }
 
             {erro && <ErrorMessage err={erro} />}
 
             {
-                !load && !selectedAccountWindowOpen && !openPaymentWindow && !deleteItemAtive &&
+                !load && !selectedAccountWindowOpen && !openPaymentWindow && !deleteItemActive && !deletePaymentActive &&
                 <TableComponent<AccountsShow>
                     data={getAccountsData()}
                     headers={['#', 'id', 'id do usuário', 'nome do usuário', 'Valor na conta', 'Valor pago']} onEdit={null} onDelete={null}
@@ -303,12 +342,12 @@ export function AccountsPage() {
                     },
                     {
                         text: 'Excluir items',
-                        method: () => { setDeleteItemActive(!deleteItemAtive) },
+                        method: () => { setDeleteItemActive(!deleteItemActive) },
                         color: 'red',
                     },
                     {
                         text: 'Excluir pagamentos',
-                        method: () => alert('hi'),
+                        method: () => {setDeletePaymentActive(!deletePaymentActive)},
                         color: 'red',
                     },
                     ]
