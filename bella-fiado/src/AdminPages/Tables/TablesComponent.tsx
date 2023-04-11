@@ -1,7 +1,8 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { capitalize } from "../stringFunctions";
 
 type ValidReactNode = string | number | boolean | null | undefined | React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+
 
 interface OtherButton<T> {
     text: string;
@@ -20,6 +21,9 @@ type TableProps<T extends Record<string, ValidReactNode>> = {
 }
 
 function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDelete, setTargetId, otherButtons }: TableProps<T>) {
+
+    const [isOptionsActive, setIsOptionsActive] = useState<boolean[]>(new Array(data.length).fill(false));
+
 
     return (
         <>
@@ -41,7 +45,6 @@ function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDe
                                 {Object.keys(data[0]).map((key) => {
 
                                     let renderItem = item[key as keyof T] as ReactNode
-                                    console.log(key)
                                     if (key == '__v' || key == 'tokens') {
                                         return
                                     }
@@ -70,18 +73,22 @@ function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDe
                                     </td>
                                 }
                                 {otherButtons != null &&
-                                    <td className="p-2 border-y flex flex-col items-center justify-center border-gray-300">
-                                        {otherButtons?.map((button) => {
-                                            return (
-                                                <button className={` w-full text-white bg-${button.color}-500 border-${button.color}-500 border px-2 mb-1 py-1 opacity-80 hover:opacity-100`} onClick={() => {
-                                                    setTargetId?.(item._id)
-                                                    button.method(item)
-                                                }}>
-                                                    {button.text}
-                                                </button>
-                                            )
-                                        })
-                                        }
+                                    <td className="p-2 border-y flex flex-col justify-center border-gray-300">
+                                        <button onClick={() => setIsOptionsActive(prev => prev.map((_, i) => i === index ? !prev[i] : false))} className="text-white bg-black py-2 px-1 ">Ações...</button>
+                                        {isOptionsActive[index] && (
+                                            <div className="flex flex-col justify-center p-2 ">
+                                                {otherButtons?.map((button) => {
+                                                    return (
+                                                        <button className={` text-white bg-${button.color}-500 border-${button.color}-500 border px-2 mb-1 py-1 opacity-80 hover:opacity-100`} onClick={() => {
+                                                            setTargetId?.(item._id)
+                                                            button.method(item)
+                                                        }}>
+                                                            {button.text}
+                                                        </button>
+                                                    )
+                                                })}
+                                            </div>
+                                        )}
                                     </td>
                                 }
                             </tr>

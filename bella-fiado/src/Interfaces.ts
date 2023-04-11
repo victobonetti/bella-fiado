@@ -22,12 +22,14 @@ export interface IAccount{
 }
 
 export interface IItem {
+    _id: string
     product_id: Iproducts;
     amount: number;
     date: Date
 }
 
 export interface IPayment{
+    _id:string;
     value: number;
     date: Date;
 }

@@ -7,6 +7,7 @@ import { ErrorMessage } from "./Loader_Error/ErrorMessage";
 import { removeAcentosEMaiusculas } from "./stringFunctions";
 import { FormComponent } from "./Forms/FormComponent";
 import { AxiosResponse } from "axios";
+import { DeleteTable } from './deleteTable/DeleteTable'
 
 interface AccountsResponse {
     items: IItem[],
@@ -14,6 +15,14 @@ interface AccountsResponse {
     user_id: Iuser
     __v: number,
     _id: string,
+}
+
+interface editItemInterface {
+    _id: string,
+    amount: number,
+    date: Date,
+    product_name: string
+    product_price: number
 }
 
 interface AccountsShow {
@@ -25,6 +34,27 @@ interface AccountsShow {
 }
 
 export function AccountsPage() {
+
+    //get account by id
+    const getAccountItemsById = (_id: string): Promise<editItemInterface[]> => {
+        return new Promise((resolve, reject) => {
+            AccountsServices.getAccountById(_id)
+                .then((response: AxiosResponse<{ account: AccountsResponse }>) => {
+                    const itemsWithoutProductId = response.data.account.items.map(item => ({
+                        _id: item._id,
+                        amount: item.amount,
+                        date: item.date,
+                        product_name: item.product_id.name,
+                        product_price: item.product_id.price
+                    }));
+                    resolve(itemsWithoutProductId);
+                })
+                .catch(e => {
+                    reject(e);
+                });
+        });
+    };
+
 
     //Get data states
     const [accountsData, setAccountsData] = useState<AccountsResponse[]>([]);
@@ -45,11 +75,12 @@ export function AccountsPage() {
                 }, 0)
             };
         });
-        console.log(data)
         return data;
     };
     const [payment, setPayments] = useState(0)
     const [getTargetId, setTargetId] = useState('')
+
+
 
     //Page states
     const [openAccountCreateForm, setOpenAccountCreateForm] = useState(false);
@@ -58,6 +89,7 @@ export function AccountsPage() {
     const [selectedAccountData, setSelectedAccountData] = useState<IAccount>()
     const [selectedAccountWindowOpen, setSelectedAccountWindowOpen] = useState(false)
     const [openPaymentWindow, setOpenPaymentWindow] = useState(false)
+    const [deleteItemAtive, setDeleteItemActive] = useState(false)
 
     //post states
     const [createAccountId, setCreateAccountId] = useState('');
@@ -72,7 +104,7 @@ export function AccountsPage() {
     const createNewAccount = (e: React.FormEvent<HTMLFormElement>) => {
         return new Promise<void>((resolve, reject) => {
             console.log(createAccountId)
-            AccountsServices.createAccount({user_id: createAccountId}).then(() => {
+            AccountsServices.createAccount({ user_id: createAccountId }).then(() => {
                 getAccounts();
                 resolve();
             }).catch((err) => {
@@ -95,8 +127,6 @@ export function AccountsPage() {
     // };
 
     const postPayment = (e: React.FormEvent<HTMLFormElement>) => {
-        console.log(getTargetId + ' TARGET')
-        console.log(payment + ' TARGET')
         return new Promise<void>((resolve, reject) => {
             AccountsServices.addPaymentToAccount(getTargetId, payment).then(() => {
                 getAccounts()
@@ -140,7 +170,6 @@ export function AccountsPage() {
     const getItems = (args: AccountsShow) => {
         setLoad(true)
         AccountsServices.getAccountById(args._id).then((a: AxiosResponse<acountAndTotal>) => {
-            console.log(a.data.account)
             setSelectedAccountData(a.data.account);
             setSelectedAccountWindowOpen(true)
             setLoad(false)
@@ -151,7 +180,6 @@ export function AccountsPage() {
         setLoad(true);
         AccountsServices.getAccounts()
             .then((response: AxiosResponse<AccountsResponse>) => {
-                console.log(Object.values(response.data))
                 setAccountsData(Object.values(response.data));
                 setLoad(false);
             })
@@ -161,11 +189,25 @@ export function AccountsPage() {
             });
     };
 
+    const deleteItem = (_id: string) => {
+        return new Promise<void>((resolve, reject) => {
+            AccountsServices.deleteItemFromAccount(getTargetId, _id).then((a) => {
+                resolve()
+                alert('Item excluído')
+            }).catch((e) => {
+                reject()
+                setErro(e)
+            })
+        })
+
+
+    }
+
     return (
-        <> 
-        { !load && !selectedAccountWindowOpen && !openPaymentWindow && <div className=" sticky w-full bg-gradient-to-b from-black to-neutral-900 h-16 flex justify-end items-center">
-            <button onClick={() => setOpenAccountCreateForm(!openAccountCreateForm)} className=" mr-4 border px-4 py-2 text-xl border-green-400 text-green-400">Criar nova conta</button>
-        </div> }
+        <>
+            {!load && !selectedAccountWindowOpen && !openPaymentWindow && <div className=" sticky w-full bg-gradient-to-b from-black to-neutral-900 h-16 flex justify-end items-center">
+                <button onClick={() => setOpenAccountCreateForm(!openAccountCreateForm)} className=" mr-4 border px-4 py-2 text-xl border-green-400 text-green-400">Criar nova conta</button>
+            </div>}
 
             {
                 openAccountCreateForm && <FormComponent title={"Insira o id do usuário"} submitFunction={createNewAccount} cancelFunction={() => setOpenAccountCreateForm(!openAccountCreateForm)} inputs={[createAccountInput]} />
@@ -237,10 +279,14 @@ export function AccountsPage() {
 
             {load && <Loader />}
 
+            {deleteItemAtive &&
+                <DeleteTable<editItemInterface> getMethod={() => getAccountItemsById(getTargetId)} headers={['teste, teste']} deleteFunction={deleteItem} cancelFunction={() => setDeleteItemActive(!deleteItemAtive)} />
+            }
+
             {erro && <ErrorMessage err={erro} />}
 
             {
-                !load && !selectedAccountWindowOpen && !openPaymentWindow &&
+                !load && !selectedAccountWindowOpen && !openPaymentWindow && !deleteItemAtive &&
                 <TableComponent<AccountsShow>
                     data={getAccountsData()}
                     headers={['#', 'id', 'id do usuário', 'nome do usuário', 'Valor na conta', 'Valor pago']} onEdit={null} onDelete={null}
@@ -253,8 +299,18 @@ export function AccountsPage() {
                     }, {
                         text: 'Ver conta',
                         method: getItems,
+                        color: 'green',
+                    },
+                    {
+                        text: 'Excluir items',
+                        method: () => { setDeleteItemActive(!deleteItemAtive) },
                         color: 'red',
-                    }
+                    },
+                    {
+                        text: 'Excluir pagamentos',
+                        method: () => alert('hi'),
+                        color: 'red',
+                    },
                     ]
                     }
                 />
