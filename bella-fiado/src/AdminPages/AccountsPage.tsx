@@ -60,8 +60,6 @@ export function AccountsPage() {
     const [openPaymentWindow, setOpenPaymentWindow] = useState(false)
 
     //post states
-    const [newUserId, setNewUserId] = useState('');
-    const [newItems, setNewItems] = useState<IItem[]>([]);
     const [createAccountId, setCreateAccountId] = useState('');
 
     //put states
@@ -78,7 +76,7 @@ export function AccountsPage() {
                 getAccounts();
                 resolve();
             }).catch((err) => {
-                alert(String(err));
+                setErro(String(err));
                 reject();
             });
         });
@@ -105,7 +103,7 @@ export function AccountsPage() {
                 alert('Pagamento lançado com sucesso.')
                 resolve()
             }).catch((e) => {
-                alert(e)
+                setErro(e)
                 reject()
             })
 
@@ -146,7 +144,7 @@ export function AccountsPage() {
             setSelectedAccountData(a.data.account);
             setSelectedAccountWindowOpen(true)
             setLoad(false)
-        }).catch(e => alert(e))
+        }).catch(e => setErro(e))
     }
 
     const getAccounts = () => {

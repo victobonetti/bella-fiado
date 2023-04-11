@@ -19,7 +19,6 @@ export interface IAccount{
     user_id: Iuser['_id'];
     items?: IItem[];
     payments?: IPayment[];
-    total?(): number;
 }
 
 export interface IItem {

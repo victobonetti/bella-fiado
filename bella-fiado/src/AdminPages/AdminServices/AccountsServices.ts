@@ -29,6 +29,10 @@ export class AccountsServices {
         }
     }
 
+    static async deleteItemFromAccount(accountId:string, item_id:string){
+        return await axios.delete(`${ACCOUNTS_URL}/deleteItem/${accountId}/${item_id}`)
+    }
+
     static async addPaymentToAccount(accountId: string, value: number) {
 
         const dateNow = new Date()
@@ -39,6 +43,11 @@ export class AccountsServices {
             date: dateNow,
         })
     }
+
+    static async deletePaymentFromAccount(accountId:string, payment_id:string){
+        return await axios.delete(`${ACCOUNTS_URL}/deletePayment/${accountId}/${payment_id}`)
+    }
+
 
     static async createAccount(accountData: IAccount) {
         return await axios.post(ACCOUNTS_URL, accountData)
