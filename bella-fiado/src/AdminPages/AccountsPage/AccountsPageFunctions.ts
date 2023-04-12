@@ -39,6 +39,33 @@ export interface acountAndTotal {
     total: number
 }
 
+export const externalCreateNewAccount = (createAccountId: string, getAccounts: () => void) => {
+    return new Promise<void>((resolve, reject) => {
+        console.log(createAccountId)
+        AccountsServices.createAccount({ user_id: createAccountId }).then(() => {
+            getAccounts();
+            resolve();
+        }).catch((err) => {
+            alert(String(err));
+            reject();
+        });
+    });
+}
+
+export const externalPostPayment = (getTargetId:string, payment:number, getAccounts: () => void) => {
+    return new Promise<void>((resolve, reject) => {
+        AccountsServices.addPaymentToAccount(getTargetId, payment).then(() => {
+            getAccounts()
+            alert('Pagamento lançado com sucesso.')
+            resolve()
+        }).catch((e) => {
+            alert(e)
+            reject()
+        })
+
+    })
+}
+
 export const externalGetAccountsData = (response: AccountsResponse[]): AccountsShow[] => {
     const data: AccountsShow[] = response.map((account) => {
         return {
@@ -84,7 +111,7 @@ export const getPaymentsById = (_id: string): Promise<editPaymentsInterface[]> =
             .then((response: AxiosResponse<{ account: AccountsResponse }>) => {
                 const paymentsArray = response.data.account.payments.map(payment => ({
                     _id: payment._id,
-                    date: String(payment.date).substring(0,10),
+                    date: String(payment.date).substring(0, 10),
                     value: `R$${payment.value.toFixed(2)}`
                 }));
                 resolve(paymentsArray);
@@ -93,4 +120,39 @@ export const getPaymentsById = (_id: string): Promise<editPaymentsInterface[]> =
                 reject(e);
             });
     });
-};
+}
+
+export const externalGetItems = (args: AccountsShow, setLoad: (value: React.SetStateAction<boolean>) => void, setSelectedAccountData: React.Dispatch<React.SetStateAction<IAccount | undefined>>,setSelectedAccountWindowOpen: React.Dispatch<React.SetStateAction<boolean>>) => {
+    setLoad(true)
+    AccountsServices.getAccountById(args._id).then((a: AxiosResponse<acountAndTotal>) => {
+        setSelectedAccountData(a.data.account);
+        setSelectedAccountWindowOpen(true)
+        setLoad(false)
+    }).catch(e => alert(e))
+}
+
+export const externalDeleteItem = (_id: string, getTargetId:string, getAccounts: () => void) => {
+    return new Promise<void>((resolve, reject) => {
+        AccountsServices.deleteItemFromAccount(getTargetId, _id).then((a) => {
+            resolve()
+            alert('Item excluído')
+            getAccounts()
+        }).catch((e) => {
+            reject()
+            alert(e)
+        })
+    })
+}
+
+export const externalDeletePayments = (_id: string, getTargetId:string, getAccounts: () => void) => {
+    return new Promise<void>((resolve, reject) => {
+        AccountsServices.deletePaymentFromAccount(getTargetId, _id).then((a) => {
+            resolve()
+            alert('Pagamento excluído')
+            getAccounts()
+        }).catch((e) => {
+            reject()
+            alert(e)
+        })
+    })
+}

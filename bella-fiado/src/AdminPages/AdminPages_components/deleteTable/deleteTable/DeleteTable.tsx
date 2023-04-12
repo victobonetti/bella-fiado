@@ -26,7 +26,7 @@ export function DeleteTable<T extends { _id: string }>({ headers, deleteFunction
     }, []);
 
     return (
-        <div className=" flex justify-center mt-4">
+        <div className=" flex  flex-col justify-center mt-4">
             <table className="border-collapse w-full">
                 <thead>
                     <tr>
@@ -50,11 +50,12 @@ export function DeleteTable<T extends { _id: string }>({ headers, deleteFunction
                             } finally {
                                 cancelFunction()
                             }
-                        
+
                         }} className="p-3 border border-gray-300 text-red-500 font-black text-4xl cursor-pointer">X</td>
                     </tr>
                 ))}
             </table>
+            <button className=" text-2xl self-center py-2 px-4 border text-black border-black" onClick={() => cancelFunction()}>Retornar</button>
         </div>
     )
 }
