@@ -4,9 +4,9 @@ import { HelloPage } from "./UserPages/HelloPage";
 import { AdminLogin } from "./AdminPages/AdminLogin";
 import { AdminPannel } from "./AdminPages/AdminPannel";
 import { UsersPage } from "./AdminPages/UsersPage";
-import { AccountsPage } from "./AdminPages/AccountsPage";
+import { AccountsPage } from "./AdminPages/AccountsPage/AccountsPage";
 import { ProductsPage } from "./AdminPages/ProductsPage";
-import { EditHeader } from "./AdminPages/Header/EditHeader";
+import { EditHeader } from "./AdminPages/AdminPages_components/Header/Header/EditHeader";
 
 export function AppRouter() {
 

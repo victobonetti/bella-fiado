@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Loader } from "../Loader_Error/Loader";
+import { Loader } from "../../Loader_Error/Loader_Error/Loader";
 
 interface Iinput {
     label: string,

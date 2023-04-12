@@ -1,11 +1,11 @@
 import { useState, useEffect, useLayoutEffect } from "react";
 import { UserServices } from "./AdminServices/UserServices";
 import { Iuser } from "../Interfaces"
-import TableComponent from "./Tables/TablesComponent";
-import { Loader } from "./Loader_Error/Loader";
-import { ErrorMessage } from "./Loader_Error/ErrorMessage";
+import TableComponent from "./AdminPages_components/Tables/Tables/TablesComponent";
+import { Loader } from "./AdminPages_components/Loader_Error/Loader_Error/Loader";
+import { ErrorMessage } from "./AdminPages_components/Loader_Error/Loader_Error/ErrorMessage";
 import { removeAcentosEMaiusculas } from "./stringFunctions";
-import { FormComponent } from "./Forms/FormComponent";
+import { FormComponent } from "./AdminPages_components/Forms/Forms/FormComponent";
 
 export function UsersPage() {
 

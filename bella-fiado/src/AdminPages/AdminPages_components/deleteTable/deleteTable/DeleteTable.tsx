@@ -1,5 +1,5 @@
 import { useLayoutEffect, useState } from "react"
-import { capitalize } from "../stringFunctions"
+import { capitalize } from "../../../stringFunctions"
 
 interface deleteTableProps<T> {
     headers: string[],

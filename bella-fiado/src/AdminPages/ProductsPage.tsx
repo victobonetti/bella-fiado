@@ -1,11 +1,11 @@
 import { FormEvent, useEffect, useLayoutEffect, useState } from "react";
 import { ProductsServices } from "./AdminServices/ProductsServices";
 import { Iproducts } from "../Interfaces";
-import TableComponent from "./Tables/TablesComponent";
+import TableComponent from "./AdminPages_components/Tables/Tables/TablesComponent";
 import { excluirLetras, removeAcentosEMaiusculas } from "./stringFunctions";
-import { Loader } from "./Loader_Error/Loader";
-import { FormComponent } from "./Forms/FormComponent";
-import { ErrorMessage } from "./Loader_Error/ErrorMessage";
+import { Loader } from "./AdminPages_components/Loader_Error/Loader_Error/Loader";
+import { FormComponent } from "./AdminPages_components/Forms/Forms/FormComponent";
+import { ErrorMessage } from "./AdminPages_components/Loader_Error/Loader_Error/ErrorMessage";
 
 
 

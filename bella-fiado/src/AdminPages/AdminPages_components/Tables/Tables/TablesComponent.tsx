@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from "react";
-import { capitalize } from "../stringFunctions";
+import { capitalize } from "../../../stringFunctions";
 
 type ValidReactNode = string | number | boolean | null | undefined | React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 
