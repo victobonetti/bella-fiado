@@ -9,23 +9,25 @@ import { ProductsPage } from "./AdminPages/ProductsPage";
 import { EditHeader } from "./AdminPages/Header/EditHeader";
 
 export function AppRouter() {
+
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<App />} />
-                <Route path="/inicio" element={<HelloPage />} />
-                <Route path="/admin" element={<AdminLogin />} />
-                <Route path="/admin/pannel" >
-                    <Route index element={<AdminPannel />} />
-                    <Route element={<EditHeader />}>
-                        <Route path="/admin/pannel/users" element={<UsersPage />} />
-                        <Route path="/admin/pannel/accounts" element={<AccountsPage />} />
-                        <Route path="/admin/pannel/products" element={<ProductsPage />} />
+        
+            <Router>
+                <Routes >
+                    <Route path="/" element={<App />} />
+                    <Route path="/inicio" element={<HelloPage />} />
+                    <Route path="/admin" element={<AdminLogin />} />
+                    <Route path="/admin/pannel" >
+                        <Route index element={<AdminPannel />} />
+                        <Route element={<EditHeader />}>
+                            <Route path="/admin/pannel/users" element={<UsersPage />} />
+                            <Route path="/admin/pannel/accounts" element={<AccountsPage />} />
+                            <Route path="/admin/pannel/products" element={<ProductsPage />} />
+                        </Route>
                     </Route>
-                </Route>
-                <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-        </Router>
+                    <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+            </Router>
 
     )
 }
