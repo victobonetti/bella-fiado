@@ -16,6 +16,7 @@ export interface Iuser {
 }
 
 export interface IAccount{
+    _id:string,
     user_id: Iuser['_id'];
     items?: IItem[];
     payments?: IPayment[];

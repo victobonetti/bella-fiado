@@ -45,7 +45,7 @@ function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDe
                                 {Object.keys(data[0]).map((key) => {
 
                                     let renderItem = item[key as keyof T] as ReactNode
-                                    if (key == '__v' || key == 'tokens') {
+                                    if (key == '__v' || key == 'tokens' || key == 'account_id') {
                                         return
                                     }
                                     if (typeof (renderItem) == 'number') {

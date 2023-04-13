@@ -122,6 +122,7 @@ export function UsersPage() {
         UserServices.getUsers()
             .then((response) => {
                 const { account_id, tokens, ...resposta } = response.data
+                console.log(resposta)
                 setUsersData(Object.values(resposta));
             })
             .catch(error => {
@@ -144,7 +145,7 @@ export function UsersPage() {
         {(erro.length > 1) && <ErrorMessage err={erro} />}
         {
             !openUserCreateForm && !openUserEditForm && !load &&
-            <TableComponent<Iuser> data={usersData} headers={['#', 'ID', 'USUÁRIO', 'SENHA', 'Id da conta', 'AÇÕES']} onEdit={() => setOpenEditForm(!openUserEditForm)} onDelete={deleteUser} setTargetId={setTargetId} />
+            <TableComponent<Iuser> data={usersData} headers={['#', 'ID', 'USUÁRIO', 'SENHA', 'AÇÕES']} onEdit={() => setOpenEditForm(!openUserEditForm)} onDelete={deleteUser} setTargetId={setTargetId} />
         }
     </>
     )
