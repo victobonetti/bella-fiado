@@ -39,6 +39,19 @@ export interface acountAndTotal {
     total: number
 }
 
+export const externalDeleteAccount = (_id: string, getAccounts: () => void) => {
+    let del = confirm('Tem certeza que deseja excluir a conta?')
+    console.log(_id)
+    if (del) {
+        AccountsServices.deleteAccount(_id).then(() => {
+            alert('Conta de id ' + _id + ' deletada.')
+            getAccounts()
+        }).catch((e) => {
+            alert(e)
+        })
+    }
+}
+
 export const externalCreateNewAccount = (createAccountId: string, getAccounts: () => void) => {
     return new Promise<void>((resolve, reject) => {
         console.log(createAccountId)
@@ -52,7 +65,7 @@ export const externalCreateNewAccount = (createAccountId: string, getAccounts: (
     });
 }
 
-export const externalPostPayment = (getTargetId:string, payment:number, getAccounts: () => void) => {
+export const externalPostPayment = (getTargetId: string, payment: number, getAccounts: () => void) => {
     return new Promise<void>((resolve, reject) => {
         AccountsServices.addPaymentToAccount(getTargetId, payment).then(() => {
             getAccounts()
@@ -122,7 +135,7 @@ export const getPaymentsById = (_id: string): Promise<editPaymentsInterface[]> =
     });
 }
 
-export const externalGetItems = (args: AccountsShow, setLoad: (value: React.SetStateAction<boolean>) => void, setSelectedAccountData: React.Dispatch<React.SetStateAction<IAccount | undefined>>,setSelectedAccountWindowOpen: React.Dispatch<React.SetStateAction<boolean>>) => {
+export const externalGetItems = (args: AccountsShow, setLoad: (value: React.SetStateAction<boolean>) => void, setSelectedAccountData: React.Dispatch<React.SetStateAction<IAccount | undefined>>, setSelectedAccountWindowOpen: React.Dispatch<React.SetStateAction<boolean>>) => {
     setLoad(true)
     AccountsServices.getAccountById(args._id).then((a: AxiosResponse<acountAndTotal>) => {
         setSelectedAccountData(a.data.account);
@@ -131,7 +144,7 @@ export const externalGetItems = (args: AccountsShow, setLoad: (value: React.SetS
     }).catch(e => alert(e))
 }
 
-export const externalDeleteItem = (_id: string, getTargetId:string, getAccounts: () => void) => {
+export const externalDeleteItem = (_id: string, getTargetId: string, getAccounts: () => void) => {
     return new Promise<void>((resolve, reject) => {
         AccountsServices.deleteItemFromAccount(getTargetId, _id).then((a) => {
             resolve()
@@ -144,7 +157,7 @@ export const externalDeleteItem = (_id: string, getTargetId:string, getAccounts:
     })
 }
 
-export const externalDeletePayments = (_id: string, getTargetId:string, getAccounts: () => void) => {
+export const externalDeletePayments = (_id: string, getTargetId: string, getAccounts: () => void) => {
     return new Promise<void>((resolve, reject) => {
         AccountsServices.deletePaymentFromAccount(getTargetId, _id).then((a) => {
             resolve()

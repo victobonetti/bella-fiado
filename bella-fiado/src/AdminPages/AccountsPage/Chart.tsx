@@ -40,11 +40,9 @@ export function Chart(props: iChart) {
     const addProducts = () => {
         setLoad(true)
         AccountsServices.addItemToAccount(props._id, selectedItems).then(() => {
-            alert('Sucesso!')
             window.location.href = window.location.origin + '/admin/pannel/accounts';
         }).catch((e) => {
             alert(e)
-        }).finally(() => {
             setLoad(false)
         })
     }

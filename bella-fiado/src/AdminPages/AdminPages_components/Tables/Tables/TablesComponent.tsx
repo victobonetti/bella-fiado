@@ -15,7 +15,7 @@ type TableProps<T extends Record<string, ValidReactNode>> = {
     headers: string[],
     onEdit?: (() => void) | null,
     onDelete: ((_id: string) => void) | null,
-    setTargetId?: ((_id: string) => void) | null,
+    setTargetId: ((_id: string) => void),
     otherButtons?: OtherButton<T>[] | null
     // otherButtonArgs?: OtherButtonArgs | null
 }
@@ -77,10 +77,11 @@ function TableComponent<T extends { _id: string }>({ data, headers, onEdit, onDe
                                         <button onClick={() => setIsOptionsActive(prev => prev.map((_, i) => i === index ? !prev[i] : false))} className="text-white bg-black py-2 px-1 ">Ações...</button>
                                         {isOptionsActive[index] && (
                                             <div className="flex flex-col justify-center p-2 ">
-                                                {otherButtons?.map((button) => {
+                                                {otherButtons?.map((button, i) => {
                                                     return (
-                                                        <button className={` text-white bg-${button.color}-500 border-${button.color}-500 border px-2 mb-1 py-1 opacity-80 hover:opacity-100`} onClick={() => {
-                                                            setTargetId?.(item._id)
+                                                        <button key={i} className={` text-white bg-${button.color}-500 border-${button.color}-500 border px-2 mb-1 py-1 opacity-80 hover:opacity-100`} onClick={() => {
+                                                            console.log(item._id)
+                                                            setTargetId(item._id)
                                                             button.method(item)
                                                         }}>
                                                             {button.text}

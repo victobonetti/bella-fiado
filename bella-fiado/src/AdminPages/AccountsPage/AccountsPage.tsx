@@ -8,7 +8,7 @@ import { removeAcentosEMaiusculas } from "../stringFunctions";
 import { FormComponent } from "../AdminPages_components/Forms/Forms/FormComponent";
 import { AxiosResponse } from "axios";
 import { DeleteTable } from '../AdminPages_components/deleteTable/deleteTable/DeleteTable'
-import { editItemInterface, AccountsResponse, editPaymentsInterface, AccountsShow, acountAndTotal, externalGetAccountsData, externalCreateNewAccount, externalPostPayment, externalGetItems, externalDeleteItem, externalDeletePayments } from "./AccountsPageFunctions";
+import { externalDeleteAccount, editItemInterface, AccountsResponse, editPaymentsInterface, AccountsShow, acountAndTotal, externalGetAccountsData, externalCreateNewAccount, externalPostPayment, externalGetItems, externalDeleteItem, externalDeletePayments } from "./AccountsPageFunctions";
 import { getAccountItemsById, getPaymentsById } from './AccountsPageFunctions'
 import { AccountBillWindow } from "./AccountBillWindow";
 
@@ -101,6 +101,11 @@ export function AccountsPage() {
         method: () => { setDeletePaymentActive(!deletePaymentActive) },
         color: 'red',
     },
+    {
+        text: 'Excluir conta',
+        method: () => { externalDeleteAccount(getTargetId, getAccounts) },
+        color: 'red',
+    },
     ]
 
     return (
@@ -147,4 +152,6 @@ export function AccountsPage() {
         </>
     );
 }
+
+
 

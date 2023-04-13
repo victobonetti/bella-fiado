@@ -20,7 +20,7 @@ export function AccountBillWindow(props: AccountBillWindowProps) {
 
                     <div className=" h-96 overflow-y-scroll border-b-2 border-black">
                         <table className=" select-none table-auto w-full text-left">
-                            <thead className=" text-center">
+                            <thead className=" sticky top-0 text-center">
                                 <tr className="bg-gray-900 text-white">
                                     <th className="py-4">Data</th>
                                     <th className="py-4">Nome do produto</th>
@@ -32,7 +32,7 @@ export function AccountBillWindow(props: AccountBillWindowProps) {
                             </thead>
                             <tbody>
                                 {props.selectedAccountData?.items?.map((data) => (
-                                    <tr key={data.product_id._id} className=" hover:opacity-90 text-center bg-gray-800 text-gray-200">
+                                    <tr key={data.product_id._id} className=" hover:bg-gray-700 text-center bg-gray-800 text-gray-200">
                                         <td>{String(data?.date).substring(0, 10)}</td>
                                         <td className="py-2 px-4">{data.product_id.name}</td>
                                         <td className="py-2 px-4">R${data.product_id.price.toFixed(2)}</td>

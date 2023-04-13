@@ -56,4 +56,8 @@ export class AccountsServices {
         return await axios.post(ACCOUNTS_URL, accountData)
     }
 
+    static async deleteAccount(_id:string){
+        return await axios.delete(`${ACCOUNTS_URL}/${_id}`)
+    }
+
 }
