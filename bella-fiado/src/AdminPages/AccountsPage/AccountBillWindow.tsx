@@ -18,7 +18,7 @@ export function AccountBillWindow(props: AccountBillWindowProps) {
             {!chartActive &&
                 <div className="w-full h-full bg-neutral-300 text-black-200">
 
-                    <div className=" h-96 border-b-2 border-black">
+                    <div className=" h-96 overflow-y-scroll border-b-2 border-black">
                         <table className=" select-none table-auto w-full text-left">
                             <thead className=" text-center">
                                 <tr className="bg-gray-900 text-white">
@@ -43,28 +43,28 @@ export function AccountBillWindow(props: AccountBillWindowProps) {
 
                                     </tr>
                                 ))}
-                                <tr className=" text-center">
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td className=" font-semibold text-2xl ">TOTAL:</td>
-                                    <td className=" text-2xl text-red-600  font-bold">R${props.selectedAccountData?.items?.reduce((total, item) => total + (item.product_id.price * item.amount), 0).toFixed(2)
-                                    }</td>
 
 
-                                </tr>
-                                <tr className=" text-center">
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td className=" font-semibold text-2xl ">Valor pago:</td>
-                                    <td className=" text-2xl text-green-600 font-bold">R${props.selectedAccountData?.payments?.reduce((total, payment) => total + payment.value, 0).toFixed(2)}</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <span className=" flex w-full h-fit justify-evenly bg-white">
+
+                        <div className="p-4">
+                            <div className=" mb-4">
+                                <p className=" font-semibold text-2xl ">Valor pago:</p>
+                                <p className=" text-2xl text-green-600 font-bold">R${props.selectedAccountData?.payments?.reduce((total, payment) => total + payment.value, 0).toFixed(2)}</p>
+                            </div>
+
+                            <div>
+                                <p className=" font-semibold text-2xl ">TOTAL:</p>
+                                <p className=" text-2xl text-red-600  font-bold">R${props.selectedAccountData?.items?.reduce((total, item) => total + (item.product_id.price * item.amount), 0).toFixed(2)
+                                }</p>
+                            </div>
+                        </div>
+
                         <button
-                            className="border shadow bg-red-500 text-white text-2xl py-2 px-4 my-4 mx-auto block"
+                            className="border h-fit shadow bg-red-500 text-white text-2xl py-2 px-4 my-4 mx-auto block"
                             onClick={() => {
                                 props.setSelectedAccountWindowOpen(false);
                                 props.setSelectedAccountData(undefined);
@@ -76,14 +76,14 @@ export function AccountBillWindow(props: AccountBillWindowProps) {
                             setChartActive(!chartActive)
                             console.log(props.selectedAccountData)
                         }
-                        } className=" border shadow bg-green-500 text-white text-2xl py-2 px-4 my-4 mx-auto block">Lançar item</button>
+                        } className=" h-fit border shadow bg-green-500 text-white text-2xl py-2 px-4 my-4 mx-auto block">Lançar item</button>
                     </span>
 
 
                 </div >
             }
 
-            {chartActive && <Chart _id={props.selectedAccountData._id} />}
+            {chartActive && props.selectedAccountData._id && <Chart cancelFunction={() => setChartActive(!chartActive)} _id={props.selectedAccountData._id} />}
         </>
     )
 }

@@ -1,7 +1,9 @@
 import axios from "axios"
 const ACCOUNTS_URL = 'https://bella-fiado-api-victobonetti.vercel.app/accounts'
 
-import { IAccount, IItem } from "../../Interfaces";
+import { IAccount, IItem, postItem } from "../../Interfaces";
+
+
 
 export class AccountsServices {
     static async getAccounts() {
@@ -16,9 +18,10 @@ export class AccountsServices {
         return await axios.get(`${ACCOUNTS_URL}/getUserAccount/${_id}`)
     }
 
-    static async addItemToAccount(accountId: string, itemsData: IItem[]) {
+    
+
+    static async addItemToAccount(accountId: string, itemsData: postItem[]) {
         const requests = itemsData.map(item => axios.post(`${ACCOUNTS_URL}/addItem/${accountId}`, {
-            _id: item.product_id,
             product_id: item.product_id,
             amount: item.amount
         }));

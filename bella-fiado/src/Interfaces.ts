@@ -16,7 +16,7 @@ export interface Iuser {
 }
 
 export interface IAccount{
-    _id:string,
+    _id?:string,
     user_id: Iuser['_id'];
     items?: IItem[];
     payments?: IPayment[];
@@ -27,6 +27,11 @@ export interface IItem {
     product_id: Iproducts;
     amount: number;
     date: Date
+}
+
+export interface postItem {
+    product_id:Iproducts,
+    amount:number
 }
 
 export interface IPayment{
