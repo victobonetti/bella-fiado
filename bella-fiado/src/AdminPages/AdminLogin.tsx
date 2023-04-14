@@ -12,7 +12,7 @@ export function AdminLogin() {
 
         if (getAdminPassword == '211276') {
             alert('Login efetuado com sucesso. ' + window.location.href)
-            window.location.href = window.location.origin + '/admin/pannel';
+            window.location.href = '/admin/pannel'
 
         } else {
             alert('Senha incorreta.')

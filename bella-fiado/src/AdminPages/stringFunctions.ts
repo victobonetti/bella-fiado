@@ -34,7 +34,3 @@ export function capitalize(inputString:string) {
     return firstChar + restOfString;
   }
   
-  // Exemplo de uso:
-  console.log(capitalize("TEXTO DE EXEMPLO")); // Saída: "Texto de exemplo"
-  console.log(capitalize("1234texto de exemplo")); // Saída: "1234texto de exemplo"
-  

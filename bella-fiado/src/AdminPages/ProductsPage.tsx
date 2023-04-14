@@ -51,11 +51,14 @@ export function ProductsPage() {
     const deleteProduct = (_id: string) => {
         let deletar = confirm('Tem certeza que deseja excluir o produto de id ' + _id + '?')
         if (deletar) {
-            ProductsServices.deleteProduct(_id).then(() => {
+            ProductsServices.deleteProduct(_id).then((a) => {
+                console.log(a)
                 getProducts()
             }).catch((err) => {
-                setErro(err)
+                alert(err)
             })
+        } else {
+            alert('Produto não foi deletado')
         }
     }
 

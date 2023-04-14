@@ -23,15 +23,16 @@ export interface IAccount{
 }
 
 export interface IItem {
-    _id: string
+    _id: string;
     product_id: Iproducts;
     amount: number;
-    date: Date
+    note?: string;
+    date: Date;
 }
 
 export interface postItem {
-    product_id:Iproducts,
-    amount:number
+    product_id:Iproducts;
+    amount:number;
 }
 
 export interface IPayment{
